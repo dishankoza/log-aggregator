@@ -1,0 +1,50 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+exporters:
+  debug:
+    verbosity: detailed
+
+  kafka/traces:
+    brokers:
+      - kafka:29092
+    topic: otlp_spans
+    encoding: otlp_json
+    partition_traces_by_id: true
+    retry_on_failure:
+      enabled: true
+    sending_queue:
+      enabled: true
+    producer:
+      compression: gzip
+
+  kafka/metrics:
+    brokers:
+      - kafka:29092
+    topic: otlp_metrics
+    encoding: otlp_proto
+    retry_on_failure:
+      enabled: true
+    sending_queue:
+      enabled: true
+    producer:
+      compression: gzip
+
+processors:
+  batch:
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [debug, kafka/traces]
+    metrics:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [debug, kafka/metrics]

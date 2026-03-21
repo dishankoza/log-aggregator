@@ -1,6 +1,7 @@
 .DS_Store
 .idea/
 .vscode/
+.venv/
 
 go-service/.gocache/
 go-service/go-service

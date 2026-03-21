@@ -143,3 +143,21 @@ services:
     depends_on:
       - java-service
       - otel-collector
+
+  ui-api:
+    build:
+      context: ./ui-api
+    restart: unless-stopped
+    environment:
+      ELASTICSEARCH_URL: "http://elasticsearch:9200"
+      ELASTICSEARCH_INDEX: "trace_spans"
+      CASSANDRA_CONTACT_POINTS: "cassandra"
+      CASSANDRA_KEYSPACE: "observability"
+      SEARCH_LIMIT: "30"
+    ports:
+      - "8000:8000"
+    depends_on:
+      cassandra:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy

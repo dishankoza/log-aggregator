@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trace Search</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <main class="layout">
+      <section class="hero">
+        <p class="eyebrow">Trace Debug Console</p>
+        <h1>Search Distributed Traces</h1>
+        <p class="subcopy">
+          Query Elasticsearch for fast matches, then expand a trace to load raw events from Cassandra.
+        </p>
+        <form id="search-form" class="search-bar">
+          <input id="search-input" type="text" placeholder="trace id, service name, route, span name" />
+          <button type="submit">Search</button>
+        </form>
+      </section>
+
+      <section class="content">
+        <div class="panel results-panel">
+          <div class="panel-header">
+            <h2>Results</h2>
+            <span id="results-count">0</span>
+          </div>
+          <div id="results" class="results-empty">Run a search to see matching spans.</div>
+        </div>
+
+        <div class="panel detail-panel">
+          <div class="panel-header">
+            <h2>Trace Detail</h2>
+            <span id="detail-trace-id">No trace selected</span>
+          </div>
+          <div id="trace-detail" class="results-empty">Select a result to load Cassandra-backed trace events.</div>
+        </div>
+      </section>
+    </main>
+
+    <script src="/static/app.js"></script>
+  </body>
+  </html>

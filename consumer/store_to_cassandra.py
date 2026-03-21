@@ -52,6 +52,21 @@ def ensure_schema(session):
         ) WITH CLUSTERING ORDER BY (event_timestamp DESC, event_id ASC)
         """
     )
+    session.execute(
+        """
+        CREATE TABLE IF NOT EXISTS trace_events_by_trace (
+            trace_id text,
+            event_timestamp timestamp,
+            event_id uuid,
+            topic text,
+            partition int,
+            offset bigint,
+            service_name text,
+            payload text,
+            PRIMARY KEY (trace_id, event_timestamp, event_id)
+        ) WITH CLUSTERING ORDER BY (event_timestamp DESC, event_id ASC)
+        """
+    )
 
 
 def extract_first(data, path, default=""):
@@ -89,6 +104,13 @@ def main():
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         """
     )
+    insert_by_trace = session.prepare(
+        """
+        INSERT INTO trace_events_by_trace
+        (trace_id, event_timestamp, event_id, topic, partition, offset, service_name, payload)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        """
+    )
 
     consumer = KafkaConsumer(
         KAFKA_TOPIC,
@@ -114,12 +136,13 @@ def main():
             service_name = extract_service_name(data)
 
             now = datetime.now(timezone.utc)
+            event_id = uuid.uuid4()
             session.execute(
                 insert,
                 (
                     message.topic,
                     now.date().isoformat(),
-                    uuid.uuid4(),
+                    event_id,
                     now,
                     message.partition,
                     message.offset,
@@ -128,6 +151,20 @@ def main():
                     payload,
                 ),
             )
+            if trace_id:
+                session.execute(
+                    insert_by_trace,
+                    (
+                        trace_id,
+                        now,
+                        event_id,
+                        message.topic,
+                        message.partition,
+                        message.offset,
+                        service_name,
+                        payload,
+                    ),
+                )
             print(
                 f"stored in cassandra topic={message.topic} partition={message.partition} "
                 f"offset={message.offset} trace_id={trace_id} service={service_name}"

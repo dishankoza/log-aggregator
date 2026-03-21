@@ -1,0 +1,15 @@
+.DS_Store
+.idea/
+.vscode/
+
+go-service/.gocache/
+go-service/go-service
+go-service/*.test
+
+cpp-service/*.o
+cpp-service/cpp-service
+
+java-service/target/
+java-service/.m2/
+
+*.log

@@ -60,6 +60,10 @@ h1 {
   margin-top: 18px;
 }
 
+.ai-bar {
+  margin-top: 12px;
+}
+
 .search-bar input,
 .search-bar button {
   border: 1px solid var(--line);
@@ -81,7 +85,7 @@ h1 {
 
 .content {
   display: grid;
-  grid-template-columns: 1.05fr 1fr;
+  grid-template-columns: 1.05fr 1fr 0.9fr;
   gap: 18px;
 }
 
@@ -107,8 +111,15 @@ h1 {
   font-size: 1.2rem;
 }
 
+.panel-subtitle {
+  color: var(--muted);
+  font-size: 0.9rem;
+  padding: 0 12px 10px;
+}
+
 #results,
-#trace-detail {
+#trace-detail,
+#ai-answer {
   padding: 12px;
 }
 
@@ -119,6 +130,11 @@ h1 {
   padding: 14px;
   margin-bottom: 12px;
   background: rgba(255, 255, 255, 0.58);
+}
+
+.ai-summary {
+  border-color: rgba(198, 93, 46, 0.35);
+  background: rgba(255, 246, 237, 0.88);
 }
 
 .result-item {

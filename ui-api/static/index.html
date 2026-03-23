@@ -12,11 +12,15 @@
         <p class="eyebrow">Trace Debug Console</p>
         <h1>Search Distributed Traces</h1>
         <p class="subcopy">
-          Query Elasticsearch for fast matches, then expand a trace to load raw events from Cassandra.
+          Search spans in Elasticsearch, load raw trace events from Cassandra, and ask natural-language debugging questions about slow or failing requests.
         </p>
         <form id="search-form" class="search-bar">
           <input id="search-input" type="text" placeholder="trace id, service name, route, span name" />
           <button type="submit">Search</button>
+        </form>
+        <form id="ai-form" class="search-bar ai-bar">
+          <input id="ai-input" type="text" placeholder="Ask: why is the request taking so long?" />
+          <button type="submit">Ask AI</button>
         </form>
       </section>
 
@@ -35,6 +39,14 @@
             <span id="detail-trace-id">No trace selected</span>
           </div>
           <div id="trace-detail" class="results-empty">Select a result to load Cassandra-backed trace events.</div>
+        </div>
+
+        <div class="panel ai-panel">
+          <div class="panel-header">
+            <h2>AI Analysis</h2>
+            <span id="ai-mode">idle</span>
+          </div>
+          <div id="ai-answer" class="results-empty">Ask a natural-language debugging question to summarize relevant traces.</div>
         </div>
       </section>
     </main>

@@ -14,3 +14,5 @@ java-service/target/
 java-service/.m2/
 
 *.log
+.tools
+.terraform

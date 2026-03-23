@@ -85,6 +85,7 @@ def ensure_index(client):
                 "http_route": {"type": "keyword"},
                 "http_url": {"type": "wildcard"},
                 "status_code": {"type": "integer"},
+                "duration_ms": {"type": "float"},
                 "payload": {"type": "text"},
             }
         },
@@ -99,6 +100,15 @@ def nanos_to_iso8601(value):
         return datetime.fromtimestamp(timestamp, tz=timezone.utc).isoformat()
     except Exception:
         return datetime.now(timezone.utc).isoformat()
+
+
+def nanos_to_duration_ms(start_value, end_value):
+    try:
+        start = int(start_value)
+        end = int(end_value)
+        return round((end - start) / 1_000_000, 3)
+    except Exception:
+        return 0.0
 
 
 def main():
@@ -144,6 +154,10 @@ def main():
                             "http_route": attrs.get("http.route", attrs.get("url.path", "")),
                             "http_url": attrs.get("http.url", attrs.get("url.full", "")),
                             "status_code": span.get("status", {}).get("code", 0),
+                            "duration_ms": nanos_to_duration_ms(
+                                span.get("startTimeUnixNano", ""),
+                                span.get("endTimeUnixNano", ""),
+                            ),
                             "payload": payload,
                         }
                         es_client.index(index=ELASTICSEARCH_INDEX, document=document)

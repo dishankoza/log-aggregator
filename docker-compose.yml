@@ -70,6 +70,17 @@ services:
       retries: 20
       start_period: 30s
 
+  ollama:
+    build:
+      context: ./ollama
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+    environment:
+      OLLAMA_MODEL: "${OPENAI_MODEL:-gemma3:270m}"
+
   cassandra-store:
     build:
       context: ./consumer
@@ -154,6 +165,10 @@ services:
       CASSANDRA_CONTACT_POINTS: "cassandra"
       CASSANDRA_KEYSPACE: "observability"
       SEARCH_LIMIT: "30"
+      AI_CONTEXT_LIMIT: "8"
+      OPENAI_MODEL: "${OPENAI_MODEL:-gemma3:270m}"
+      OPENAI_BASE_URL: "${OPENAI_BASE_URL:-http://ollama:11434/v1}"
+      OPENAI_API_KEY: "${OPENAI_API_KEY:-ollama}"
     ports:
       - "8000:8000"
     depends_on:
@@ -161,3 +176,8 @@ services:
         condition: service_healthy
       elasticsearch:
         condition: service_healthy
+      ollama:
+        condition: service_started
+
+volumes:
+  ollama-data:
